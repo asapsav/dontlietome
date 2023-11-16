@@ -21,11 +21,11 @@ def get_ai_snippets_for_query(query):
         headers=headers,
     ).json()
 
-messages = [
+
+def get_openai_completions(prompt):
+    messages = [
         {"role": "system", "content": "You are a helpfull assistant."}
     ]
-def get_openai_completions(prompt, messages):
-
     messages.append({"role": "user", "content": prompt})
     
     completion = openai.ChatCompletion.create(
@@ -42,7 +42,7 @@ def get_openai_completions(prompt, messages):
 def analyze_claim(link, claim):
     # Placeholder data
     try:
-        data_needed = get_openai_completions(f"What data is needed to find if this claim: {claim} is true or false?", messages)
+        data_needed = get_openai_completions(f"What data is needed to find if this claim: {claim} is true or false?")
     except Exception as e:
         data_needed = f"Error: {e}"
     try:
@@ -81,12 +81,9 @@ def main():
             st.write(analysis["found_data"])
 
             # JSON log
-            st.subheader("4. OLOG of the Claim and Data Found")
-            json_log = {
-                "claim": claim,
-                "analysis": analysis
-            }
-            st.json(json_log)
+            st.subheader("4. OLOG of the Claim")
+            json_olog = get_openai_completions(f"Return a json of an OLOG of this claim:{claim}")
+            st.markdown(json_olog)
 
             # Placeholder for ULTRA Model Embeddings
             st.subheader("5. ULTRA Embeddings")
